@@ -2,6 +2,19 @@ import Menu from './Menu.js';
 
 const Order = {
     cart: [],
+    load: () => {
+        if (localStorage.getItem('cm-cart')) {
+            try {
+                Order.cart = JSON.parse(localStorage.getItem('cm-cart'));
+                Order.render();
+            } catch(e) {
+                localStorage.removeItem('cm-cart');
+            }
+        }
+    },
+    save: () => {
+        localStorage.setItem('cm-cart', JSON.stringify(Order.cart));
+    },
     add: async id => {
         const product = await Menu.getProductById(id);
         const results = Order.cart.filter(prodInCart => prodInCart.product.id==id);
@@ -23,6 +36,7 @@ const Order = {
         Order.render();
     },
     render: () => {
+        Order.save();
         if (Order.cart.length==0) {
             document.querySelector("#order").innerHTML = `
                 <p class="empty">Your order is empty</p>
