@@ -2,7 +2,32 @@ import Menu from './Menu.js';
 
 const Order = {
     cart: [],
-    load: () => {
+    openDB: async () => {
+      return await idb.openDB('cm-storage', 1, {
+        async upgrade(db) {
+          // create data store
+          await db.createObjectStore('order');
+        }
+      })
+    },
+    load: async () => {
+      const db = await Order.openDB();
+      const cart = await db.get('order', 'cart');
+
+      if (cart) {
+        try {
+          Order.cart = JSON.parse(cart);
+          Order.render();
+        } catch (e) {
+          db.clear('order');
+        }
+      }
+    },
+    save: async () => {
+      const db = await Order.openDB();
+      await db.put('order', JSON.stringify(Order.cart), 'cart');
+    },
+    loadWS: () => {
         if (localStorage.getItem('cm-cart')) {
             try {
                 Order.cart = JSON.parse(localStorage.getItem('cm-cart'));
@@ -12,7 +37,7 @@ const Order = {
             }
         }
     },
-    save: () => {
+    saveWS: () => {
         localStorage.setItem('cm-cart', JSON.stringify(Order.cart));
     },
     add: async id => {
