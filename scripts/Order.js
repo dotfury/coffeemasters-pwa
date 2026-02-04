@@ -95,6 +95,18 @@ const Order = {
                     </ul>
                      <button onclick="Order.place()">Place Order</button>
                     `;
+            if (window.showOpenFilePicker) {
+              html += `
+                <a class="navlink material-symbols-outlined" 
+                  href="javascript:Order.importCart()" style="color: var(--primaryColor")>
+                  file_upload
+                </a>
+                <a class="navlink material-symbols-outlined"  
+                  href="javascript:Order.exportCart()" style="color: var(--primaryColor")>
+                  file_download
+                </a>
+              `;
+            }
             document.querySelector("#order").innerHTML = html;
         }
     }
